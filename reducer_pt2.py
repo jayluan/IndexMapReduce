@@ -12,10 +12,11 @@
 
 import sys
 import math
+import re
 
 stored_data = []
 stored_doc_count_word = {}    # number of documents with a given word
-#f = open('../test2.txt')
+#f = open('../reduced.txt')
 #for line in f:
 for line in sys.stdin:
     #count the number of lines and get # of docs w/ the term in it
@@ -28,15 +29,18 @@ for line in sys.stdin:
     stored_data.append(entry)
 
 #loop through all the stored input data
+regex = re.compile(r'[\W_]+')
 for entry in stored_data:
     tfidf = {}
     word = entry[0]
+    if bool(regex.match(word)):     # Skip non-alpha numeric stuff
+            continue
     count = entry[1]
     numDocs = entry[2]    # number of documents with this word in it
     i = 3
 
     #loop through the rest of the doc and compute all the TFIDF's
-    while i is not len(entry):
+    while i < len(entry):
         doc = entry[i]
         i += 1
         totalWords = entry[i]
@@ -51,8 +55,9 @@ for entry in stored_data:
         tfidf[tfidf_index] = tf*idf
 
     #insert tfidf values into the entry
-    for i in tfidf:
-        entry.insert(i, str(tfidf[i]))
-
+    offset = 0
+    for i in sorted(tfidf.iterkeys()):
+        entry.insert(i + offset, str(tfidf[i]))
+        offset += 1
     #print the line
     print "\t".join(entry)
