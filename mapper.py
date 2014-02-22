@@ -27,6 +27,8 @@ def find_nth(line, delim, n):
 
 docNum = 1
 # input comes from STDIN (standard input)
+#f = open('../output.txt')
+#for line in f:
 for line in sys.stdin:
     urlStart = find_nth(line, 'AFUCKINGDELIMITER', 1) + 17
     urlEnd = find_nth(line, 'AFUCKINGDELIMITER', 2)
@@ -54,6 +56,6 @@ for line in sys.stdin:
         tmpD[word][1] = find_occurrences(occurrence_text, word)
 
     for k,v in tmpD.iteritems():
-        print "%s\t%d\t%s\t%d\t%d\t%s" % (k,v[0],url,docNum,len(word_list),'\t'.join(map(str, v[1])))
+        print "%s\t%d\t%s\t%d\t%d\t%s" % (k,len(v[1]),url,docNum,len(word_list),'\t'.join(map(str, v[1])))
 
     docNum += 1

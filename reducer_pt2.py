@@ -1,4 +1,5 @@
-'''
+#!/usr/bin/env python
+"""
     reducer_pt2.py
     purpose: takes pipe from reducer and computes the TF-IDF index
     the layout of the input is as follows:
@@ -7,9 +8,7 @@
 
     the output is:
    (word) (total_freq) (#of_documents) (doc#1) (TFIDF) (#words_total) (freq) (pos1) (pos2) (pos3) ... (doc#2) (TFIDF) (#words_total) (freq) (pos1) (pos2) ...
-
-
-'''
+"""
 
 import sys
 import math
@@ -41,7 +40,7 @@ for entry in stored_data:
         doc = entry[i]
         i += 1
         totalWords = entry[i]
-        tfidf_index = i    # we want to store tfidf right before frequency, so we keep track of the index of that position
+        tfidf_index = i    # we want to store tfidf right bdeefore frequency, so we keep track of the index of that position
         i += 1
         freq = entry[i]
         i += int(freq)+1

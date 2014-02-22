@@ -21,8 +21,8 @@ DEBUG = False
 
 # input comes from STDIN
 #f = open('../test.txt')
+#for line in f:
 for line in sys.stdin:
-#for line in sys.stdin:
 
     # remove leading and trailing whitespace
     line = line.strip()
