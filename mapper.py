@@ -51,6 +51,6 @@ for line in sys.stdin:
         tmpD[word][1] = find_occurrences(plainText, word)
 
     for k,v in tmpD.iteritems():
-        print "%s\t%d\t%s\t%d\t%s" % (k,v[0],url,docNum, '\t'.join(map(str, v[1])))
+        print "%s\t%d\t%s\t%d\t%d\t%s" % (k,v[0],url,docNum,len(word_list),'\t'.join(map(str, v[1])))
 
     docNum += 1
