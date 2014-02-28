@@ -34,3 +34,4 @@ def pages_to_mem(pagesFilename='output.txt'):
             endIndex = find_nth(line, 'AFUCKINGDELIMITER', 4) - 3
             plainText = line[startIndex:endIndex]
             docs.append(plainText)
+    return docs
