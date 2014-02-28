@@ -37,6 +37,7 @@ for line in sys.stdin:
     endIndex = find_nth(line, 'AFUCKINGDELIMITER', 4) - 3
     plainText = line[startIndex:endIndex]
 
+
     plainText.decode("utf-8")
 
     word_list = re.sub(ur"(?u)\\x[A-Za-z0-9]{0,2}",'' ,plainText)
