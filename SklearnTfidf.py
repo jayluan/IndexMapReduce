@@ -29,10 +29,12 @@ def GetTop5(query, tfidf, dictionary):
     except KeyError, err:
         print 'Warning, Key %s Not Found' % (err)
     if query_vector.nnz == 0:
-        return
+        return None, None
 
     cosine_similarities = linear_kernel(query_vector, tfidf).flatten()
-    return cosine_similarities.argsort()[:-6:-1]
+    cos_indicies = cosine_similarities.argsort()[:-6:-1]
+    scores = cosine_similarities[cos_indicies]
+    return cos_indicies, scores
 
 
 def main():
@@ -43,16 +45,18 @@ def main():
         query = raw_input("Please enter query ('q' to quit): ")
         if query == "q":
             break
-        url_return = GetTop5(query, tfidf, dictionary)
+        url_return, scores = GetTop5(query, tfidf, dictionary)
         if url_return is None:
             if output_text:
                 f.write('Query: %s\nNo Results Found\n\n' % (query))
             print "Sorry, no results found...\n\n"
         else:
+            print "TF-IDF\t\tURL(s)"
+            elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(scores, url_return)]
             if output_text:
-                f.write('Query: %s\nResults:\n\t' % (query) + '\n\t'.join([urls[i] for i in url_return]))
+                f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
-            print "\n".join([urls[i] for i in url_return])+'\n\n'
+            print "\n".join(elegant_return)+'\n\n'
 
     f.close()
 
