@@ -36,4 +36,13 @@ def pages_to_mem(pagesFilename='output.txt'):
             plainText = line[startIndex:endIndex]
             docs.append(plainText)
             urls.append(url)
-    return docs, url
+    return docs, urls
+
+
+
+
+
+
+
+
+
