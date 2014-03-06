@@ -26,6 +26,7 @@ def find_nth(line, delim, n):
 def pages_to_mem(pagesFilename='output.txt'):
     docs = []
     urls = []
+    titles = []
     with open(pagesFilename) as f:
         for line in f:
             urlStart = find_nth(line, 'AFUCKINGDELIMITER', 1) + 17
@@ -34,9 +35,16 @@ def pages_to_mem(pagesFilename='output.txt'):
             startIndex = find_nth(line, 'AFUCKINGDELIMITER', 3) + 19
             endIndex = find_nth(line, 'AFUCKINGDELIMITER', 4) - 3
             plainText = line[startIndex:endIndex]
+            htmlStartIndex = find_nth(line, 'AFUCKINGDELIMETER', 4) + 17
+            htmlEndIndex = find_nth(line, 'AFUCKINGDELIMITER', 5)
+            html = line[htmlStartIndex:htmlEndIndex]
+            titleStartIndex = html.find('<title>') + 7
+            titleEndIndex = html.find('</title>')
+            titleStr = html[titleStartIndex:titleEndIndex]
+            titles.append(titleStr)
             docs.append(plainText)
             urls.append(url)
-    return docs, urls
+    return docs, urls, titles
 
 
 
