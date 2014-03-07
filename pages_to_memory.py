@@ -1,4 +1,5 @@
 import sys
+from bs4 import BeautifulSoup as bs
 
 
 def find_occurrences(text, word):
@@ -27,6 +28,8 @@ def pages_to_mem(pagesFilename='output.txt'):
     docs = []
     urls = []
     titles = []
+    totalRelationships = []
+    fuck = 0
     with open(pagesFilename) as f:
         for line in f:
             urlStart = find_nth(line, 'AFUCKINGDELIMITER', 1) + 17
@@ -38,13 +41,30 @@ def pages_to_mem(pagesFilename='output.txt'):
             htmlStartIndex = find_nth(line, 'AFUCKINGDELIMETER', 4) + 17
             htmlEndIndex = find_nth(line, 'AFUCKINGDELIMITER', 5)
             html = line[htmlStartIndex:htmlEndIndex]
+            linkAnchors = []
+            soup = bs(html)
+            for link in soup.find_all('a'):
+                linkAnchors.append(link.get('href'))
+            linkRelationships = []
+            linkCount = 0
+            externalLinkCount = 0
+            for link in linkAnchors:
+                if link != None and link.startswith('http'):
+                    linkRelationships.append((url,link))
+                    externalLinkCount += 1
+                linkCount += 1
+            if linkCount != externalLinkCount:
+                linkRelationships.append((url,url))
             titleStartIndex = html.find('<title>') + 7
             titleEndIndex = html.find('</title>')
             titleStr = html[titleStartIndex:titleEndIndex]
             titles.append(titleStr)
             docs.append(plainText)
             urls.append(url)
-    return docs, urls, titles
+            totalRelationships.append(linkRelationships)
+            print fuck
+            fuck += 1
+    return docs, urls, titles, tuple(totalRelationships)
 
 
 
