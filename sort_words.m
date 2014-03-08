@@ -1,4 +1,4 @@
-data = load('tfidf_data.mat');
+data = load('../tfidf_data.mat');
 terms = data.terms;
 titles = data.titles;
 term_words = data.term_words;
@@ -33,19 +33,23 @@ for i=1:length(catTitleTerms)
        termIndex = termIndex + 1;
        teFound = 1;
     end
-    if strcmp(word, sorted_title_words{titleIndex}) == 1
-        tiCol = titles(:,titleIndex);
-        titleIndex = titleIndex + 1;
-        tiFound = 1;
+    if ~(titleIndex > length(sorted_title_words))
+        if strcmp(word, sorted_title_words{titleIndex}) == 1
+            tiCol = titles(:,titleIndex);
+            titleIndex = titleIndex + 1;
+            tiFound = 1;
+        end
     end
     if tiFound && teFound
-        finalTfidf(:,i) = (1/3)*tiCol + (1/3)*teCol;
+        finalTfidf(:,i) = (1.5)*tiCol + teCol;
     elseif tiFound && ~teFound
-        finalTfidf(:,i) = (1/3)*tiCol;
+        finalTfidf(:,i) = (1.5)*tiCol;
     else
-        finalTfidf(:,i) = (1/3)*teCol;
+        finalTfidf(:,i) = teCol;
     end
     teFound = 0;
     tiFound = 0;
-    i
+    disp(i);
 end
+
+save('final_tfidf.mat', 'finalTfidf');
