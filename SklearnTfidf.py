@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from pages_to_memory import pages_to_mem
 from sklearn.metrics.pairwise import linear_kernel
+from NDCG import CalcNDCG
 from itertools import izip
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -18,13 +19,13 @@ output_text = False
 # and also returns dictionaries for each matrix mapping words to indicies
 def LoadDocuments(fname):
     crawl_data, urls, titles = pages_to_mem(fname)
-    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english')
+    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
     term_tfidf = tfidfVect.fit_transform(crawl_data)
     dict_values = tfidfVect.get_feature_names()
     i = iter(dict_values)
     term_b = dict(izip(i, xrange(len(dict_values))))    # dictionary of words and indicies
 
-    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english')
+    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
     title_tfidf = tfidfVect.fit_transform(titles)
     dict_values = tfidfVect.get_feature_names()
     i = iter(dict_values)
@@ -116,15 +117,15 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 
 
 #Original tfidf function that just returns page rank based on tfidf
-def main2():
-    tfidf, dictionary, urls = LoadDocuments(sys.argv[1])
+def main2(fname):
+    tmp1, tmp2, tfidf, dictionary, urls = LoadDocuments(fname)
     query = ""
     f = open('milestone2.txt', 'w')
     while(True):
         query = raw_input("Please enter query ('q' to quit): ")
         if query == "q":
             break
-        url_return, scores = GetTop5Tfdif(query, tfidf, dictionary)
+        url_return, scores = GetTop5Tfidf(query, tfidf, dictionary)
         if url_return is None:
             if output_text:
                 f.write('Query: %s\nNo Results Found\n\n' % (query))
@@ -136,6 +137,7 @@ def main2():
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
             print "\n".join(elegant_return)+'\n\n'
+            print "NDCG Score: %f" % (CalcNDCG(urls, query))
 
     f.close()
 
@@ -197,7 +199,7 @@ def main(fname):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main2(sys.argv[1])
 
 
 
