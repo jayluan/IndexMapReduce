@@ -8,7 +8,7 @@
 class Doc(object):
     def __init__(self, num, tfidf=0, word_count=0, count=0, pos=None):
         self.DocID = num
-        self.TFIDF = tfidf
+        self.TFIDF = tfidf 
         self.Count = count
         if pos is None:
             self.Positions = []
@@ -42,7 +42,7 @@ class Index(object):
         return entries
 
     #Returns a list of positions where the current word is listed
-    #in a given DocId, or a single position at position=index
+    #in a given DocId, or a single position at position=index  
     def GetDocPositions(self, DocId, position=None):
         for doc in self.Docs:
             if doc.DocID is DocId:
