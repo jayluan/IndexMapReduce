@@ -9,7 +9,7 @@ import sys
 from scipy.sparse.linalg import svds
 import numpy as np
 import cPickle as pickle
-
+from NDCG import CalcNDCG
 
 output_text = False
 
@@ -116,15 +116,15 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 
 
 #Original tfidf function that just returns page rank based on tfidf
-def main2():
-    tfidf, dictionary, urls = LoadDocuments(sys.argv[1])
+def main2(fname):
+    tmp1, tmp2, tfidf, dictionary, urls = LoadDocuments(fname) 
     query = ""
     f = open('milestone2.txt', 'w')
     while(True):
         query = raw_input("Please enter query ('q' to quit): ")
         if query == "q":
             break
-        url_return, scores = GetTop5Tfdif(query, tfidf, dictionary)
+        url_return, scores = GetTop5Tfidf(query, tfidf, dictionary)
         if url_return is None:
             if output_text:
                 f.write('Query: %s\nNo Results Found\n\n' % (query))
@@ -136,7 +136,7 @@ def main2():
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
             print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Score: %f" % (CalcNDCG(urls, query))
+            print "NDCG Score: %f" % (CalcNDCG([urls[f] for f in url_return], query))
     f.close()
 
 
@@ -197,7 +197,7 @@ def main(fname):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main2(sys.argv[1])
 
 
 
