@@ -137,7 +137,7 @@ def main2(fname):
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
             print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Score: %f" % (CalcNDCG([urls[f] for f in url_return], query))
+            print "NDCG Score: %f" % (CalcNDCG(urls, query))
 
     f.close()
 
