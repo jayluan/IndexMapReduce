@@ -64,6 +64,30 @@ def GetTop5Tfidf(query, tfidf, dictionary):
     return cos_indicies, scores
 
 
+def PrintStartupBanner():
+    print '''                                             ,o88888\n 
+                                                   ,o8888888'\n 
+                             ,:o:o:oooo.        ,8O88Pd8888"\n 
+                         ,.::.::o:ooooOoOoO. ,oO8O8Pd888'"\n 
+                       ,.:.::o:ooOoOoOO8O8OOo.8OOPd8O8O"\n 
+                      , ..:.::o:ooOoOOOO8OOOOo.FdO8O8"\n 
+                     , ..:.::o:ooOoOO8O888O8O,COCOO" \n
+                    , . ..:.::o:ooOoOOOO8OOOOCOCO"\n 
+                     . ..:.::o:ooOoOoOO8O8OCCCC"o\n 
+                        . ..:.::o:ooooOoCoCCC"o:o \n
+                        . ..:.::o:o:,cooooCo"oo:o: \n
+                     `   . . ..:.:cocoooo"'o:o:::' \n
+                     .`   . ..::ccccoc"'o:o:o:::' \n
+                    :.:.    ,c:cccc"':.:.:.:.:.' \n
+                  ..:.:"'`::::c:"'..:.:.:.:.:.' \n
+                ...:.'.:.::::"'    . . . . .' \n
+               .. . ....:."' `   .  . . '' \n
+             . . . ...."' \n
+             .. . ."'     [THE PLANET SATURN] \n
+            . \n
+    '''+'WELCOME TO THE MOST AWESOME SEARCH ENGINE AT UCI\n\n'
+
+
 #user query terms to figure out resultant idea position, then compare idea
 #position to the location of doucments 
 #Note: Terms_redeuced should be NxK
@@ -131,7 +155,8 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 
 #Original tfidf function that just returns page rank based on tfidf
 def main2():
-
+    PrintStartupBanner()
+    print "Please wait while your experience is being optimized\n"
     #title_tfidf, title_dict, term_tfidf, term_dict, urls, relationships = LoadDocuments(sys.argv[1], False)
     K = 400
     
