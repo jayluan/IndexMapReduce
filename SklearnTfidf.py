@@ -10,6 +10,8 @@ from scipy.sparse.linalg import svds
 import numpy as np
 import cPickle as pickle
 from NDCG import CalcNDCG
+import networkx as nx
+from utilities import Utility
 
 output_text = False
 
@@ -130,11 +132,16 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 
 #Original tfidf function that just returns page rank based on tfidf
 def main2(fname):
-    tmp1, tmp2, tfidf, dictionary, urls = LoadDocuments(fname) 
+    tmp1, tmp2, tfidf, dictionary, urls, relationships = LoadDocuments(fname, True) 
  
 #    tfidf = pickle.load(open('tfidf_test.p', 'rb'))
 #    dictionary = pickle.load(open('dictionary_test.p', 'rb'))
 #    urls = pickle.load(open('urls_test.p', 'rb'))
+    
+    util = Utility()
+    util.addEdges(relationships)
+    pageRank = util.pageRank()
+
 
     query = ""
     f = open('milestone2.txt', 'w')
