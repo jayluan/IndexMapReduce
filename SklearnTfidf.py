@@ -18,19 +18,19 @@ output_text = False
 # Loads an index and returns the TFIDF matrix for both the title and terms
 # and also returns dictionaries for each matrix mapping words to indicies
 def LoadDocuments(fname, collect_links):
-    crawl_data, urls, titles = pages_to_mem(fname, collect_links)
+    crawl_data, urls, titles, relationships = pages_to_mem(fname, collect_links)
     tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
     term_tfidf = tfidfVect.fit_transform(crawl_data)
     dict_values = tfidfVect.get_feature_names()
     i = iter(dict_values)
     term_b = dict(izip(i, xrange(len(dict_values))))    # dictionary of words and indicies
 
-    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
-    title_tfidf = tfidfVect.fit_transform(titles)
-    dict_values = tfidfVect.get_feature_names()
-    i = iter(dict_values)
-    title_b = dict(izip(i, xrange(len(dict_values))))    # dictionary of words and indicies
-    return title_tfidf, title_b, term_tfidf, term_b, urls
+    # tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
+    # title_tfidf = tfidfVect.fit_transform(titles)
+    # dict_values = tfidfVect.get_feature_names()
+    # i = iter(dict_values)
+    # title_b = dict(izip(i, xrange(len(dict_values))))    # dictionary of words and indicies
+    return term_tfidf, term_b, urls, relationships
 
 
 #parse a query into either ngrams or if it's less than the size of an ngram, into
@@ -48,7 +48,7 @@ def ParseQuery(query, ngram_size):
 def GetTop5Tfidf(query, tfidf, dictionary):
 #    query = query.split()
 #    query = [x.strip().lower() for x in query]
-    query.lower()
+    query = query.lower()
     query_vector = lil_matrix((1, len(dictionary)), dtype='float64')
     try:
         query_vector[0, dictionary[query]] = 1
@@ -58,7 +58,7 @@ def GetTop5Tfidf(query, tfidf, dictionary):
         return None, None
 
     cosine_similarities = linear_kernel(query_vector, tfidf).flatten()
-    cos_indicies = cosine_similarities.argsort()[:-6:-1]
+    cos_indicies = cosine_similarities.argsort()[:-51:-1]
     scores = cosine_similarities[cos_indicies]
     return cos_indicies, scores
 
@@ -131,11 +131,21 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 #Original tfidf function that just returns page rank based on tfidf
 def main2():
 
-    tfidf, dictionary, urls, relationships = LoadDocuments(sys.argv[1], True)
+    #tfidf, dictionary, urls, relationships = LoadDocuments(sys.argv[1], True)
     
-    util = Utility()
-    util.addEdges(relationships)
-    pageRank = util.pageRank()
+    # util = Utility()
+    # util.addEdges(relationships)
+    # pageRank = util.pageRank()
+
+    tfidf = pickle.load(open('tfidf.p', 'rb'))
+    dictionary = pickle.load(open('dictionary.p', 'rb'))
+    urls = pickle.load(open('urls.p', 'rb'))
+    pagerank = pickle.load(open('pagerank.p', 'rb'))
+
+    # pickle.dump(tfidf, open('tfidf.p', 'wb'))
+    # pickle.dump(dictionary, open('dictionary.p', 'wb'))
+    # pickle.dump(urls, open('urls.p', 'wb'))
+    # pickle.dump(pageRank, open('pagerank.p', 'wb'))
 
     query = ""
     f = open('milestone2.txt', 'w')
@@ -158,13 +168,20 @@ def main2():
                 f.write('Query: %s\nNo Results Found\n\n' % (query))
             print "Sorry, no results found...\n\n"
         else:
+            relevantURLs = [urls[f] for f in url_return]
+            rankedLinks = []
+            for url in relevantURLs:
+                rankedLinks = (url, pagerank[url])
+            sorted(rankedLinks, key=lambda x:-x[1])
+
+
             print "TF-IDF\t\tURL(s)"
-            elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(scores, url_return)]
+            elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(scores, rankedLinks[0:4])]
             if output_text:
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
             print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Score: %f" % (CalcNDCG([urls[f] for f in url_return], query))
+            print "NDCG Score: %f" % (CalcNDCG(rankedLinks[0:4], query))
     f.close()
 
 
@@ -225,7 +242,7 @@ def main(fname):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main2()
 
 
 
