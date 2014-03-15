@@ -56,7 +56,7 @@ def GetTop5Tfidf(query, tfidf, dictionary):
     except KeyError, err:
         print 'Warning, Key %s Not Found' % (err)
     if query_vector.nnz == 0:
-        return None, None
+        return np.array([]), np.array([])
 
     cosine_similarities = linear_kernel(query_vector, tfidf).flatten()
     cos_indicies = cosine_similarities.argsort()[:-21:-1]
@@ -167,7 +167,6 @@ def main2():
     # V_reduced = np.dot(s_reduced, V).T
 
     query = ""
-    f = open('milestone2.txt', 'w')
     while(True):
         url_return = []
         term_url_return = np.array([])
@@ -193,49 +192,38 @@ def main2():
         url_return = [urls[k] for k in term_url_return] + [urls[k] for k in title_url_return]
 
         score = np.concatenate((term_scores, title_scores))
-        sorted_score_indeces = np.array(score).argsort()
+        sorted_score_indeces = np.array(score).argsort()[::-1]
 
         tmp = [url_return[f] for f in sorted_score_indeces]
         url_return = tmp
 
         if url_return is None:
-            if output_text:
-                f.write('Query: %s\nNo Results Found\n\n' % (query))
             print "Sorry, no results found...\n\n"
         else:
 
-            print 'Term Only'
-            print "TF-IDF\t\tURL(s)"
-            elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(term_scores, term_url_return[0:5])]
-            if output_text:
-                f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
-                f.write("\n\n")
-            print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Term Scores: %f" % (CalcNDCG([urls[f] for f in term_url_return[0:5]], query))
+            # print 'Term Only'
+            # print "TF-IDF\t\tURL(s)"
+            # elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(term_scores, term_url_return[0:5])]
+            # print "\n".join(elegant_return)+'\n\n'
+            # print "NDCG Term Scores: %f" % (CalcNDCG([urls[f] for f in term_url_return[0:5]], query))
 
-            print "____________________________________________________________"
+            # print "____________________________________________________________"
 
-            print 'Title Only'
-            print "TF-IDF\t\tURL(s)"
-            elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(title_scores, title_url_return[0:5])]
-            if output_text:
-                f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
-                f.write("\n\n")
-            print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Title Scores: %f" % (CalcNDCG([urls[f] for f in title_url_return[0:5]], query))
+            # print 'Title Only'
+            # print "TF-IDF\t\tURL(s)"
+            # elegant_return = ['%.6f' % (i) + '\t' + urls[k] for i, k in zip(title_scores, title_url_return[0:5])]
+            # print "\n".join(elegant_return)+'\n\n'
+            # print "NDCG Title Scores: %f" % (CalcNDCG([urls[f] for f in title_url_return[0:5]], query))
 
-            print "____________________________________________________________"
+            # print "____________________________________________________________"
 
-            print 'Term and Title'
-            print "TF-IDF\t\tURL(s)"
-            elegant_return = ['%.6f' % (i) + '\t' + k for i, k in zip(score, url_return[0:5])]
-            if output_text:
-                f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
-                f.write("\n\n")
-            print "\n".join(elegant_return)+'\n\n'
-            print "NDCG Term + Title Scores: %f" % (CalcNDCG(url_return[0:5], query))
+            # print 'Term and Title'
+            # print "TF-IDF\t\tURL(s)"
+            # elegant_return = ['%.6f' % (i) + '\t' + k for i, k in zip(score, url_return[0:5])]
+            # print "\n".join(elegant_return)+'\n\n'
+            # print "NDCG Term + Title Scores: %f" % (CalcNDCG(url_return[0:5], query))
 
-            print "____________________________________________________________"
+            # print "____________________________________________________________"
 
             relevantURLs = url_return
             rankedLinks = []
@@ -249,12 +237,9 @@ def main2():
             print 'Term and Title + PageRank'
             print "TF-IDF\t\tURL(s)"
             elegant_return = ['%.6f' % (i) + '\t' + k[0] for i, k in zip(score, rankedLinks[0:5])]
-            if output_text:
-                f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
-                f.write("\n\n")
             print "\n".join(elegant_return)+'\n\n'
             print "NDCG Term and Title + PageRank Scores: %f" % (CalcNDCG([f[0] for f in rankedLinks[0:5]], query))
-    f.close()
+
 
 
 #New and improved page ranking algorithm
