@@ -1,5 +1,5 @@
 mondego
-mondego.ics.uci.edu
+http://mondego.ics.uci.edu/
 sdcl.ics.uci.edu/mondego-group/
 https://mailman.ics.uci.edu/mailman/listinfo/mondego
 https://mailman.ics.uci.edu/mailman/admin/mondego
@@ -11,7 +11,7 @@ https://www.ics.uci.edu/~lopes/
 nile.ics.uci.edu:9000/wifi/user/account/
 
 machine learning
-archive.ics.uci.edu/ml/‎
+http://archive.ics.uci.edu/ml/‎
 https://archive.ics.uci.edu/ml/machine-learning-databases/
 https://archive.ics.uci.edu/ml/datasets.html
 http://sli.ics.uci.edu/Classes/2012F-273a
@@ -80,7 +80,7 @@ http://nile.ics.uci.edu/xwiki/bin/view/Main/TagsRss
 http://www.ics.uci.edu/~lopes/publications.html
 http://www.ics.uci.edu/~lopes/opensim/SingularitySetupGuide.pdf
 https://www.ics.uci.edu/~lopes/dv/dv.html
-nile.ics.uci.edu/xwiki/bin/export/Main/TagsRss?format=rtf‎
+http://nile.ics.uci.edu/xwiki/bin/export/Main/TagsRss?format=rtf‎
 
 REST
 https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
@@ -117,7 +117,4 @@ http://www.ics.uci.edu/~djp3/classes/2010_01_CS221/
 http://www.ics.uci.edu/~djp3/classes/2010_01_CS221/assignmentSchedule.html
 http://www.ics.uci.edu/~djp3/classes/2009_01_02_INF141/
 http://www.ics.uci.edu/~djp3/classes/2014_01_INF141/calendar.html
-
-
-
 
