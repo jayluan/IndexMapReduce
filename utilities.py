@@ -6,10 +6,13 @@ class Utility:
 
 
     def __init__(self):
-        self.pages = nx.Graph()
+        self.pages = nx.DiGraph()
 
     def addNodes(self, urls):
         self.pages.add_nodes_from(urls)
+
+    def pageRank(self):
+    	return nx.pagerank(self.pages)
 
     def addEdges(self, relationships):
         for entry in relationships:

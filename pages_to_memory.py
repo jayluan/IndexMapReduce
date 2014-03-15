@@ -24,7 +24,7 @@ def find_nth(line, delim, n):
     return start
 
 
-def pages_to_mem(pagesFilename='output.txt'):
+def pages_to_mem(pagesFilename='output.txt', createRelationships = False):
     docs = []
     urls = []
     titles = []
@@ -41,27 +41,28 @@ def pages_to_mem(pagesFilename='output.txt'):
             htmlStartIndex = find_nth(line, 'AFUCKINGDELIMETER', 4) + 17
             htmlEndIndex = find_nth(line, 'AFUCKINGDELIMITER', 5)
             html = line[htmlStartIndex:htmlEndIndex]
-            linkAnchors = []
-            soup = bs(html)
-            for link in soup.find_all('a'):
-                linkAnchors.append(link.get('href'))
-            linkRelationships = []
-            linkCount = 0
-            externalLinkCount = 0
-            for link in linkAnchors:
-                if link != None and link.startswith('http'):
-                    linkRelationships.append((url,link))
-                    externalLinkCount += 1
-                linkCount += 1
-            if linkCount != externalLinkCount:
-                linkRelationships.append((url,url))
+            if createRelationships:
+                linkAnchors = []
+                soup = bs(html)
+                for link in soup.find_all('a'):
+                    linkAnchors.append(link.get('href'))
+                linkRelationships = []
+                linkCount = 0
+                externalLinkCount = 0
+                for link in linkAnchors:
+                    if link != None and link.startswith('http'):
+                        linkRelationships.append((url,link))
+                        externalLinkCount += 1
+                    linkCount += 1
+                if linkCount != externalLinkCount:
+                    linkRelationships.append((url,url))
+                totalRelationships.append(linkRelationships)
             titleStartIndex = html.find('<title>') + 7
             titleEndIndex = html.find('</title>')
             titleStr = html[titleStartIndex:titleEndIndex]
             titles.append(titleStr)
             docs.append(plainText)
             urls.append(url)
-            totalRelationships.append(linkRelationships)
             print fuck
             fuck += 1
     return docs, urls, titles, tuple(totalRelationships)

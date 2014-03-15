@@ -9,6 +9,7 @@ import sys
 from scipy.sparse.linalg import svds
 import numpy as np
 import cPickle as pickle
+from utilities import Utility
 
 
 output_text = False
@@ -117,7 +118,13 @@ def AddTermTitleMat(term_tfidf, term_dict, title_tfidf, title_dict):
 
 #Original tfidf function that just returns page rank based on tfidf
 def main2():
-    tfidf, dictionary, urls = LoadDocuments(sys.argv[1])
+
+    tfidf, dictionary, urls, relationships = LoadDocuments(sys.argv[1], True)
+    
+    util = Utility()
+    util.addEdges(relationships)
+    pageRank = util.pageRank()
+
     query = ""
     f = open('milestone2.txt', 'w')
     while(True):
@@ -135,7 +142,7 @@ def main2():
             if output_text:
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
-            print "\n".join(elegant_return)+'\n\n'
+          print "\n".join(elegant_return)+'\n\n'
 
     f.close()
 
