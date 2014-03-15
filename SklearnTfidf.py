@@ -10,22 +10,22 @@ from scipy.sparse.linalg import svds
 import numpy as np
 import cPickle as pickle
 from utilities import Utility
-
+from NDCG import CalcNDCG
 
 output_text = False
 
 
 # Loads an index and returns the TFIDF matrix for both the title and terms
 # and also returns dictionaries for each matrix mapping words to indicies
-def LoadDocuments(fname):
-    crawl_data, urls, titles = pages_to_mem(fname)
-    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english')
+def LoadDocuments(fname, collect_links):
+    crawl_data, urls, titles = pages_to_mem(fname, collect_links)
+    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
     term_tfidf = tfidfVect.fit_transform(crawl_data)
     dict_values = tfidfVect.get_feature_names()
     i = iter(dict_values)
     term_b = dict(izip(i, xrange(len(dict_values))))    # dictionary of words and indicies
 
-    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english')
+    tfidfVect = TfidfVectorizer(strip_accents='unicode', stop_words='english', ngram_range=(1,2))
     title_tfidf = tfidfVect.fit_transform(titles)
     dict_values = tfidfVect.get_feature_names()
     i = iter(dict_values)
@@ -33,13 +33,25 @@ def LoadDocuments(fname):
     return title_tfidf, title_b, term_tfidf, term_b, urls
 
 
+#parse a query into either ngrams or if it's less than the size of an ngram, into
+#individual words
+def ParseQuery(query, ngram_size):
+    indata = query.split()
+    output = []
+    for i in range(len(indata) - ngram_size + 1):
+        output.append(" ".join(indata[i:i+ngram_size]))
+    if not output: # if ngrams don't exist in the query, just return split input
+        output = indata
+    return output
+
+
 def GetTop5Tfidf(query, tfidf, dictionary):
-    query = query.split()
-    query = [x.strip().lower() for x in query]
+#    query = query.split()
+#    query = [x.strip().lower() for x in query]
+    query.lower()
     query_vector = lil_matrix((1, len(dictionary)), dtype='float64')
     try:
-        for i in query:
-            query_vector[0, dictionary[i]] = 1
+        query_vector[0, dictionary[query]] = 1
     except KeyError, err:
         print 'Warning, Key %s Not Found' % (err)
     if query_vector.nnz == 0:
@@ -128,10 +140,19 @@ def main2():
     query = ""
     f = open('milestone2.txt', 'w')
     while(True):
+        url_return = np.array([])
+        score = np.array([])
         query = raw_input("Please enter query ('q' to quit): ")
         if query == "q":
             break
-        url_return, scores = GetTop5Tfdif(query, tfidf, dictionary)
+
+        query_list = ParseQuery(query, 2)
+        for word in query_list:
+            tmp_urls, tmp_scores = GetTop5Tfidf(query, tfidf, dictionary)
+            url_return = np.concatenate((url_return, tmp_urls))
+            scores = np.concatenate((score, tmp_scores))
+        url_return = url_return.astype(int)
+
         if url_return is None:
             if output_text:
                 f.write('Query: %s\nNo Results Found\n\n' % (query))
@@ -142,8 +163,8 @@ def main2():
             if output_text:
                 f.write('Query: %s\nResults\n----------------------------------------------\n\tTF-IDF\t\tURL\n\t' % (query) + '\n\t'.join(elegant_return))
                 f.write("\n\n")
-          print "\n".join(elegant_return)+'\n\n'
-
+            print "\n".join(elegant_return)+'\n\n'
+            print "NDCG Score: %f" % (CalcNDCG([urls[f] for f in url_return], query))
     f.close()
 
 
